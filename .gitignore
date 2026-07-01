@@ -1,0 +1,40 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Compiled binary (project output)
+golangrestproject1
+userserver
+userserver-linux
+
+# Test binary
+*.test
+
+# Go build/test cache
+*.out
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Dependency vendor directory
+vendor/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
