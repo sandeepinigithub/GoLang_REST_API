@@ -1,0 +1,219 @@
+{
+  "info": {
+    "name": "Server2Admin - User CRUD via Server1User",
+    "description": "Admin server (port 8081) that forwards all requests to Server1User (port 8080). Make sure Server1User is running before hitting these endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "admin_url",
+      "value": "http://localhost:8081",
+      "type": "string",
+      "description": "Server2Admin base URL"
+    },
+    {
+      "key": "user_url",
+      "value": "http://localhost:8080",
+      "type": "string",
+      "description": "Server1User base URL (for reference)"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\",\n  \"age\": 30\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{admin_url}}/admin/users",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users"]
+        },
+        "description": "Server2Admin forwards POST to Server1User /users. Returns 201 on success, 409 if email already exists."
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{admin_url}}/admin/users",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users"]
+        },
+        "description": "Server2Admin forwards GET to Server1User /users. Returns list of all users."
+      },
+      "response": []
+    },
+    {
+      "name": "Get User by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{admin_url}}/admin/users/1",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users", "1"]
+        },
+        "description": "Server2Admin forwards GET to Server1User /users/{id}. Returns 404 if not found."
+      },
+      "response": []
+    },
+    {
+      "name": "Update User",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Alice Updated\",\n  \"email\": \"alice.updated@example.com\",\n  \"age\": 31\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{admin_url}}/admin/users/1",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users", "1"]
+        },
+        "description": "Server2Admin forwards PUT to Server1User /users/{id}. Returns 404 if not found, 409 if email taken."
+      },
+      "response": []
+    },
+    {
+      "name": "Delete User",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{admin_url}}/admin/users/1",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users", "1"]
+        },
+        "description": "Server2Admin forwards DELETE to Server1User /users/{id}. Returns 404 if not found."
+      },
+      "response": []
+    },
+    {
+      "name": "Create User - Duplicate Email (409)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Bob\",\n  \"email\": \"alice@example.com\",\n  \"age\": 25\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{admin_url}}/admin/users",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users"]
+        },
+        "description": "Duplicate email - Server1User returns 409, Server2Admin forwards it back."
+      },
+      "response": []
+    },
+    {
+      "name": "Get User - Not Found (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{admin_url}}/admin/users/999",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users", "999"]
+        },
+        "description": "Non-existent user - Server1User returns 404, Server2Admin forwards it back."
+      },
+      "response": []
+    },
+    {
+      "name": "Create User - Missing Fields (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"\",\n  \"email\": \"\",\n  \"age\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{admin_url}}/admin/users",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users"]
+        },
+        "description": "Validation fails in Server2Admin itself before even calling Server1User. Returns 400."
+      },
+      "response": []
+    },
+    {
+      "name": "Create User - Server1User Down (502)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Charlie\",\n  \"email\": \"charlie@example.com\",\n  \"age\": 28\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{admin_url}}/admin/users",
+          "host": ["{{admin_url}}"],
+          "path": ["admin", "users"]
+        },
+        "description": "Stop Server1User first, then hit this. Server2Admin returns 502 Bad Gateway when Server1User is unreachable."
+      },
+      "response": []
+    }
+  ]
+}
